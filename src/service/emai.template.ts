@@ -1,4 +1,4 @@
-export function emailTemplate({ otp }: { otp: string }) {
+export function emailTemplate(otp: string, subject: string) {
   return `<!DOCTYPE html>
                 <html>
                 <head>
@@ -34,7 +34,7 @@ export function emailTemplate({ otp }: { otp: string }) {
                 </tr>
                 <tr>
                 <td>
-                <h1 style="padding-top:25px; color:#630E2B">Email Confirmation</h1>
+                <h1 style="padding-top:25px; color:#630E2B">${subject}</h1>
                 </td>
                 </tr>
                 <tr>
@@ -45,7 +45,7 @@ export function emailTemplate({ otp }: { otp: string }) {
                 </tr>
                 <tr>
                 <td>
-                <p style="margin:10px 0px 30px 0px;border-radius:4px;padding:10px 20px;border: 0;color:#fff;background-color:#630E2B; ">${otp}</p>
+                <h1 style="margin:10px 0px 30px 0px;border-radius:4px;padding:10px 20px;border: 0;color:#fff;background-color:#630E2B; ">${otp}</h1>
                 </td>
                 </tr>
                 </table>

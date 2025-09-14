@@ -1,12 +1,15 @@
-import { HydratedDocument, ProjectionType, RootFilterQuery } from "mongoose";
-import { Model } from "mongoose";
+import { RootFilterQuery, ProjectionType, Types } from "mongoose";
+import { HydratedDocument, Model } from "mongoose";
 
-export abstract class DBRepository<TDocument> {
+export class DbRepository<TDocument> {
   constructor(protected readonly model: Model<TDocument>) { }
-  async create(data: Partial<TDocument>): Promise<HydratedDocument<TDocument>> {
+  create = async (data: Partial<TDocument>): Promise<HydratedDocument<TDocument>> => {
     return this.model.create(data);
   }
-  async findOne(filter: RootFilterQuery<TDocument> , select?: ProjectionType<TDocument> ): Promise<HydratedDocument<TDocument> | null> {
+  findOne = async (filter: RootFilterQuery<TDocument>, select?: ProjectionType<TDocument>): Promise<HydratedDocument<TDocument> | null> => {
     return this.model.findOne(filter, select);
+  }
+  findById = async (id: Types.ObjectId, select?: ProjectionType<TDocument>): Promise<HydratedDocument<TDocument> | null> => {
+    return this.model.findById(id, select);
   }
 }

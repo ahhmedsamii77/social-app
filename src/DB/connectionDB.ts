@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
-export async function connectDB() {
-  mongoose.connect(process.env.MONGO_URL as unknown as string)
-    .then(() => console.log("db connected......"))
-    .catch(error => console.log("error to connect db", error));
+export async function checkConnectionDb() {
+  mongoose.connect(process.env.MONGO_URL!)
+    .then(() => console.log("Connected to DB..............."))
+    .catch((error) => console.log("failed to connect to DB", error));
 }
