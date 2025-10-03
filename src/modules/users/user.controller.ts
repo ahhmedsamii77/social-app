@@ -1,39 +1,53 @@
 import { Router } from "express";
-import { authentication, validation } from "../../middleware";
 import * as UV from "./user.validation";
-import US from "./user.service";
-import { TokenType } from "../../utils";
+import US from "./user.service"
+import { allowedExtension, authentication, authorization, multerCloud, validation } from "../../middleware";
+import { RoleType, TokenType } from "../../utils";
 export const userRouter = Router();
 
 // signup
-userRouter.post("/signup", validation(UV.SignupSchema), US.signUp);
+userRouter.post("/signup", validation(UV.signupSchema), US.signUp);
 
 // confirm email
-userRouter.patch("/confirmEmail", validation(UV.ConfirmEmailSchema), US.confirmEmail);
+userRouter.patch("/confirm-email", validation(UV.confirmEmailSchema), US.confirmEmail);
 
 // signin
-userRouter.post("/signin", validation(UV.SigninSchema), US.signIn);
+userRouter.post("/signin", validation(UV.signinSchema), US.signIn);
 
 // login with google
-userRouter.post("/loginWithGmail", validation(UV.LoginWithGmailSchema), US.loginWithGmail);
-
-// forget password
-userRouter.patch("/forgetPassword", validation(UV.ForgetPassswordSchema), US.forgetPassword);
-
-// reset password
-userRouter.patch("/resetPassword", validation(UV.ResetPassswordSchema), US.resetPassword);
+userRouter.post("/google-signin", US.loginWithGmail);
 
 // logout
-userRouter.patch("/logout", authentication(), validation(UV.LogoutSchema), US.logOut);
+userRouter.patch("/logout", authentication(), validation(UV.logoutSchema), US.logOut);
 
 // refresh token
-userRouter.get("/refreshToken", authentication(TokenType.Refresh), US.refreshToken);
-
-// get profile
-userRouter.get("/profile", authentication(), US.getProfile);
+userRouter.get("/refresh-token", authentication(TokenType.REFRESH), US.refreshToken);
 
 // update password
-userRouter.patch("/updatePassword", authentication(), validation(UV.UpdatePassswordSchema), US.updatePassword);
+userRouter.patch("/update-password", authentication(), validation(UV.updatePasswordSchema), US.updatePassword);
+
+// forget password
+userRouter.post("/forget-password", validation(UV.forgetPasswordSchema), US.forgetPassword);
+
+// reset password
+userRouter.patch("/reset-password", validation(UV.resetPasswordSchema), US.resetPassword);
 
 // update profile
-userRouter.patch("/updateProfile", authentication(), validation(UV.UpdateProfileSchema), US.updateProfile);
+userRouter.patch("/update-profile", authentication(), validation(UV.updateProfileSchema), US.updateProfile);
+
+// uplaod profile image
+userRouter.post("/upload-profile-image", authentication(),
+  // multerCloud({ fileTypes: allowedExtension.image }).array("profileImages"),
+  US.uploadImage);
+
+// get user data
+userRouter.get("/me", authentication(), US.getUserData);
+
+// get profile
+userRouter.get("/:userId", authentication(), US.getProfile);
+
+// freeze account
+userRouter.delete("/freeze-account{/:userId}", authentication(), US.freezeAccount);
+
+// unfreeze account
+userRouter.patch("/unfreeze-account/:userId", authentication(), authorization([RoleType.ADMIN]), US.unfreezeAccount);

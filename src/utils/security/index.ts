@@ -1,17 +1,19 @@
-import { hash, compare } from "bcrypt";
+import { hash, compare } from "bcrypt"
 import CryptoJS from "crypto-js";
-export async function Hash(plainText: string, salt: number = Number(process.env.SALT)): Promise<string> {
+export async function Hash({ plainText, salt = Number(process.env.SALT) }: { plainText: string, salt?: number }) {
   return hash(plainText, salt);
 }
 
-export async function Compare(plainText: string, cipherText: string): Promise<boolean> {
-  return await compare(plainText, cipherText);
+export async function Compare({ plainText, cipherText }: { plainText: string, cipherText: string }) {
+  return compare(plainText, cipherText);
 }
 
-export async function Encrypt({ plainText, signature }: { plainText: string, signature: string }): Promise<string> {
-  return CryptoJS.AES.encrypt(plainText, signature).toString();
+
+
+export async function Encrypt({ plainText , secretKey}: { plainText: string , secretKey: string }) {
+  return CryptoJS.AES.encrypt(plainText, secretKey).toString();
 }
 
-export async function Decrypt({ cipherText, signature }: { cipherText: string, signature: string }): Promise<string> {
-  return CryptoJS.AES.decrypt(cipherText, signature).toString(CryptoJS.enc.Utf8);
+export async function Decrypt({ cipherText , secretKey}: { cipherText: string , secretKey: string }) {
+  return CryptoJS.AES.decrypt(cipherText, secretKey).toString(CryptoJS.enc.Utf8);
 }

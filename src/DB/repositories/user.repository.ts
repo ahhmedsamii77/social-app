@@ -1,8 +1,8 @@
 import { Model } from "mongoose";
-import { DbRepository } from "./Db.repository";
 import { UserType } from "../../utils";
+import { DBRepository } from "./db.repository";
 
-export class UserRepository extends DbRepository<UserType> {
+export class UserRepository extends DBRepository<UserType> {
   constructor(protected readonly model: Model<UserType>) {
     super(model);
   }

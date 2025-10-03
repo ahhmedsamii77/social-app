@@ -3,15 +3,21 @@ import { AppError, ReqType, SchemaType } from "../utils";
 
 export function validation(schema: SchemaType) {
   return (req: Request, res: Response, next: NextFunction) => {
-    let validationErrors = [];
+    let validationError = [];
     for (const key of Object.keys(schema) as ReqType[]) {
       const result = schema[key]?.safeParse(req[key]);
+      if (req.file) {
+        req.body.attachments = req.file;
+      }
+      if (req.files) {
+        req.body.attachments = req.files;
+      }
       if (!result?.success) {
-        validationErrors.push(result?.error);
+        validationError.push(result?.error)
       }
     }
-    if (validationErrors.length) {
-      throw new AppError(JSON.parse(validationErrors as unknown as string), 400);
+    if (validationError.length) {
+      throw new AppError(JSON.parse(validationError as unknown as string), 400);
     }
     return next();
   }

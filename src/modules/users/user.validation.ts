@@ -1,89 +1,83 @@
-import { sign } from "jsonwebtoken";
 import z, { email } from "zod";
 import { FlagType, GenderType } from "../../utils";
-export const SigninSchema = {
-  body: z.object({
-    email: z.email(),
-    password: z.string().min(8),
-  }),
-}
-export const SignupSchema = {
-  body: SigninSchema.body.extend({
-    fullName: z.string(),
-    confirmPassword: z.string(),
-    age: z.number(),
-    phone: z.string(),
-    address: z.string().optional(),
-    image: z.string().optional(),
-    gender: z.enum([GenderType.Male, GenderType.Female]).optional(),
+export const signupSchema = {
+  body: z.strictObject({
+    fullName: z.string().min(3, { message: "full name must be at least 3 characters long" }),
+    password: z.string().min(6, { message: "password must be at least 6 characters long" }),
+    email: z.email({ message: "invalid email" }),
+    age: z.number().min(18, { message: "age must be at least 18" }),
+    phone: z.string().min(10, { message: "phone number must be at least 10 characters long" }).regex(/^(20)?01[0125][0-9]{8}$/, { message: "invalid phone number" }),
+    address: z.string().min(3, { message: "address must be at least 3 characters long" }).optional(),
+    profileImage: z.string().optional(),
+    confirmPassword: z.string().min(6, { message: "password must be at least 6 characters long" }),
+    gender: z.enum([GenderType.MALE, GenderType.FEMALE]).optional()
   }).refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords do not match",
+    message: "passwords do not match",
     path: ["confirmPassword"],
   })
 }
 
-
-export const ConfirmEmailSchema = {
-  body: z.object({
-    email: z.string(),
-    otp: z.string().length(6),
+export const logoutSchema = {
+  body: z.strictObject({
+    flag: z.enum([FlagType.Current, FlagType.All])
   })
 }
 
 
-
-export const LoginWithGmailSchema = {
-  body: z.object({
-    idToken: z.string(),
+export const confirmEmailSchema = {
+  body: z.strictObject({
+    email: z.email({ message: "invalid email" }).optional(),
+    otp: z.string().min(6, { message: "otp must be at least 6 characters long" }).optional(),
   })
 }
 
 
-export const ForgetPassswordSchema = {
-  body: z.object({
-    email: z.string(),
+export const signinSchema = {
+  body: z.strictObject({
+    email: z.email({ message: "invalid email" }),
+    password: z.string().min(6, { message: "password must be at least 6 characters long" })
   })
 }
 
-export const UpdatePassswordSchema = {
-  body: z.object({
-    oldPassword: z.string().min(8),
-    newPassword: z.string().min(8),
-    confirmPassword: z.string().min(8),
+
+export const updatePasswordSchema = {
+  body: z.strictObject({
+    oldPassword: z.string().min(6, { message: "password must be at least 6 characters long" }),
+    newPassword: z.string().min(6, { message: "password must be at least 6 characters long" }),
+    confirmPassword: z.string().min(6, { message: "password must be at least 6 characters long" }),
   }).refine((data) => data.newPassword === data.confirmPassword, {
-    message: "Passwords do not match",
+    message: "passwords do not match",
     path: ["confirmPassword"],
   })
 }
 
 
-export const UpdateProfileSchema = {
-  body: z.object({
-    email: z.string().optional(),
-    password: z.string().min(8).optional(),
-    fullName: z.string().optional(),
-    age: z.number().optional(),
-    phone: z.string().optional(),
-    address: z.string().optional(),
-    image: z.string().optional(),
-    gender: z.enum([GenderType.Male, GenderType.Female]).optional(),
+export const forgetPasswordSchema = {
+  body: z.strictObject({
+    email: z.email({ message: "invalid email" }),
   })
 }
 
-
-export const LogoutSchema = {
-  body: z.object({
-    flag: z.enum([FlagType.All, FlagType.Current]),
-  })
-}
-
-
-export const ResetPassswordSchema = {
-  body: SigninSchema.body.extend({
-    confirmPassword: z.string(),
-    otp: z.string().length(6),
+export const resetPasswordSchema = {
+  body: z.strictObject({
+    password: z.string().min(6, { message: "password must be at least 6 characters long" }),
+    confirmPassword: z.string().min(6, { message: "password must be at least 6 characters long" }),
+    otp: z.string().min(6, { message: "otp must be at least 6 characters long" }),
+    email: z.email({ message: "invalid email" }),
   }).refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords do not match",
+    message: "passwords do not match",
     path: ["confirmPassword"],
+  })
+}
+
+
+export const updateProfileSchema = {
+  body: z.strictObject({
+    fullName: z.string().min(3, { message: "full name must be at least 3 characters long" }).optional(),
+    age: z.number().min(18, { message: "age must be at least 18" }).optional(),
+    phone: z.string().min(10, { message: "phone number must be at least 10 characters long" }).regex(/^(20)?01[0125][0-9]{8}$/, { message: "invalid phone number" }).optional(),
+    address: z.string().min(3, { message: "address must be at least 3 characters long" }).optional(),
+    gender: z.enum([GenderType.MALE, GenderType.FEMALE]).optional(),
+    email: z.email({ message: "invalid email" }).optional(),
   })
 }
